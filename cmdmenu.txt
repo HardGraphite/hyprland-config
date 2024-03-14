@@ -1,0 +1,12 @@
+# Power & session options
+lock	loginctl lock-session
+shutdown	shutdown now
+reboot	shutdown -r now
+
+# Screenshot
+screenshot (screen)	grim "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
+screenshot (region)	slurp | grim -g - "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
+
+# Hyprland
+Hyprland effects on	@hypreffects on
+Hyprland effects off	@hypreffects off

@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case "$#$1" in
+1on)
+    tf=true
+    ;;
+1off)
+    tf=false
+    ;;
+*)
+    echo 'usage:' $0 'on|off'
+    exit 1
+    ;;
+esac
+
+commands=(
+    keyword decoration:blur:enabled $tf \;
+    keyword decoration:drop_shadow  $tf \;
+    keyword animations:enabled      $tf \;
+)
+
+exec hyprctl --batch "${commands[*]}"

@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#
+## Idle manager daemon
+#
+
+LOCK_TIMEOUT=900 # sec
+DPMS_TIMEOUT=920 # sec
+SLEEP_TIMEOUT=3600 # sec
+SWAYLOCK_VARIANT=effects # swaylock-*
+
+if [[ "$XDG_CURRENT_DESKTOP" = 'Hyprland' ]]; then
+    DPMS_ON_CMD='echo -n dpms on ...; hyprctl dispatch dpms on'
+    DPMS_OFF_CMD='echo -n dpms off ...; hyprctl dispatch dpms off'
+else
+    echo 'unknown desktop:' $XDG_CURRENT_DESKTOP
+    exit 1
+fi
+
+LOCK_PROG=swaylock
+LOCK_PROG_ARGS=(
+    --daemonize
+    --ignore-empty-password
+    --indicator-caps-lock
+    --color 1d243d
+    --font 'mono' --font-size 56
+    --indicator-radius 200
+    --indicator-thickness 20
+    --line-uses-ring
+)
+case "$SWAYLOCK_VARIANT" in
+effects)
+    LOCK_PROG_ARGS+=(
+        --fade-in 3
+        --grace 5
+        --clock
+        --datestr '%F/%a'
+        --timestr '%H:%M'
+        --indicator-idle-visible
+        --screenshots
+        --effect-blur '16x4'
+        --effect-greyscale
+        --effect-vignette '0.5:0.5'
+    )
+    ;;
+esac
+
+pkill -x swayidle
+exec swayidle -w \
+    timeout $LOCK_TIMEOUT 'loginctl lock-session' \
+    timeout $DPMS_TIMEOUT "$DPMS_OFF_CMD" resume "$DPMS_ON_CMD" \
+    timeout $SLEEP_TIMEOUT 'systemctl suspend' \
+    before-sleep 'loginctl lock-session' \
+    after-resume "$DPMS_ON_CMD" \
+    lock "pgrep -cx $LOCK_PROG || $LOCK_PROG ${LOCK_PROG_ARGS[*]}"

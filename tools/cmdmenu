@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#
+## Command menu
+#
+# command list file format:
+#   <name>\t<command>
+#   <name>\t@<tool_cmd>
+#   ...
+#   # comment ...
+
+if [[ $# -ne 2 ]]; then
+    echo 'usage:' $0 '<CMD_LIST_FILE>' '<DMENU_CMD>'
+    exit 1
+fi
+conf_file="$1"
+dmenu_cmd="$2"
+
+cmd_list=''
+declare -A cmd_dict
+
+while IFS='	' read conf_key conf_var; do
+    if [[ -z "$conf_key" ]] || [[ "$conf_key" == '#'* ]]; then
+        continue
+    fi
+    cmd_list+="$conf_key"$'\n'
+    cmd_dict["$conf_key"]="$conf_var"
+done < "$conf_file"
+
+cmd_name=$(echo "$cmd_list" | $dmenu_cmd)
+[[ $? -ne 0 ]] && exit 1
+cmd=${cmd_dict["$cmd_name"]}
+[[ -z "$cmd" ]] && exit 1
+sleep .5s
+[[ "$cmd" == '@'* ]] && cmd="$(dirname $(readlink -f "$0"))/${cmd:1}"
+eval "$cmd"

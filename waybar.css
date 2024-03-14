@@ -1,0 +1,90 @@
+* {
+    border: none;
+}
+
+window#waybar {
+    background-color: rgba(20, 22, 30, 0.7);
+    color: #ddd;
+    transition-duration: 0.3s;
+}
+
+window#waybar.empty, window#waybar.floating {
+    background-color: transparent;
+}
+
+window#waybar.fullscreen {
+    background-color: rgba(140, 112, 20, 0.7);
+}
+
+#workspaces {
+    font-family: 'Iosevka Slab';
+    font-size: 16px;
+    margin: 0 0 0 4px;
+}
+
+#workspaces button {
+    background-color: rgba(18, 57, 79, 0.8);
+    color: #aaa;
+    margin: 2px;
+    padding: 0 2px;
+    border-radius: 7px;
+}
+
+#workspaces button:hover {
+    background-color: #aaa;
+    color: #111;
+}
+
+#workspaces button.active {
+    background-color: rgba(84, 139, 176, 0.9);
+    color: #eee;
+}
+
+#workspaces button.urgent {
+    background-color: #eb4d4b;
+}
+
+#window {
+    font-family: 'Roboto', sans;
+    font-size: 16px;
+    margin: 0 4px;
+    border-bottom: 2px solid #33ccff;
+}
+
+#tray, #pulseaudio, #network, #battery, #clock {
+    font-family: 'Iosevka Slab', 'Symbols Nerd Font Mono';
+    font-size: 16px;
+    background-color: #a0c4dc;
+    color: #332;
+    padding: 1px 8px;
+    margin: 2px 0 2px 6px;
+    border-radius: 4px;
+}
+
+#tray {
+    background-color: #5481b0;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #eb4d4b;
+}
+
+#battery.warning:not(.charging) {
+    background-color: #eb4d4b;
+    color: #ffffff;
+}
+
+#battery.critical:not(.charging) {
+    background-color: #eb4d4b;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}

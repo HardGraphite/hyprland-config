@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#
+## Wallpaper daemon
+#
+
+PICTURE_DIR="$HOME/Pictures/Wallpapers/selected"
+CHANGE_INTERVAL='15m'
+
+if [[ $(pgrep -fx "$0") ]]; then
+    echo "** '$0' is already running"
+    exit 1
+fi
+
+readarray -d '' picture_files < <( \
+    find "$PICTURE_DIR" -type f \
+    \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname "*.png" \) \
+    -print0 \
+)
+picture_count=${#picture_files[@]}
+if [[ $picture_count -eq 0 ]]; then
+    echo '** cannot find image files in' $PICTURE_DIR
+    exit 1
+fi
+
+killall -eq swaybg
+trap 'killall -eq swaybg; exit' SIGINT SIGTERM
+
+while true; do
+    index_list=$(shuf -i 0-$(($picture_count - 1)))
+    for idx in $index_list; do
+        swaybg --output '*' --mode fill --image "${picture_files[idx]}" > /dev/null 2>&1 &
+        last_swaybg_pid=$!
+        sleep $CHANGE_INTERVAL
+        kill $last_swaybg_pid
+    done
+done
