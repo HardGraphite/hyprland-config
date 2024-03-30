@@ -2,20 +2,16 @@
 
 HYPR_LOG_DIR='/tmp/hypr'
 
-echo -en '\e[31m*\e[33m Press any key to start Hyprland...\e[0m'
-if read -t 3; then
-    echo
-    if which figlet > /dev/null 2>&1; then
-        echo -en '\e[1;36m'
-        figlet -f big -w $COLUMNS -c 'Hello Hypr'
-        echo -en '\e[0m'
-    else
-        echo -e '\t\t===== \e[36mHello\e[0m, \e[32mHypr\e[0m! ====='
-    fi
-    if [[ ! -d "$HYPR_LOG_DIR" ]]; then
-        mkdir -pm 777 "$HYPR_LOG_DIR" && chmod o+t "$HYPR_LOG_DIR"
-    fi
-    exec Hyprland > "$HYPR_LOG_DIR/hyprland-$$.log" 2>&1
-fi
+function cancel {
+    echo -e '\e[31mAbort.\e[0m'
+    exit 1
+}
 
-echo 'Abort.'
+echo -e '\e[33mStarting Hyprland...\e[0m \e[2m(Ctrl-C to cancel)\e[0m'
+trap cancel SIGINT
+read -t 1
+
+if [[ ! -d "$HYPR_LOG_DIR" ]]; then
+    mkdir -pm 777 "$HYPR_LOG_DIR" && chmod o+t "$HYPR_LOG_DIR"
+fi
+exec Hyprland > "$HYPR_LOG_DIR/hyprland-$$.log" 2>&1
