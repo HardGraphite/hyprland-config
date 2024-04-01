@@ -1,0 +1,10 @@
+#!/bin/bash
+
+## A wrapper of waybar that automatically restarts waybar after it crashes.
+
+WAYBAR_PATH=$(which waybar)
+[[ $? = 0 ]] || exit 1
+
+until "$WAYBAR_PATH" "$@"; do
+    echo 'Waybar crashed. Restarting...'
+done
