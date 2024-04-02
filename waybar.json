@@ -2,12 +2,23 @@
   "layer": "top",
   "spacing": 4,
 
-  "modules-left": ["hyprland/workspaces", "hyprland/window"],
+  "modules-left": ["hyprland/workspaces", "custom/hypaper", "hyprland/window"],
   "modules-right": ["tray", "pulseaudio", "network", "battery", "clock"],
 
   "tray": {
     "icon-size": 18,
     "spacing": 8
+  },
+  "custom/hypaper": {
+    "exec": "exec stdbuf -o0 sed 's/.*/{\"alt\":\"&\"}/' /tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hypaper-indicator",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": { "0": "", "1": "󰢡", "2": "󰢣", "3": "󰢤", "4": "󰢥" },
+    "restart-interval": 2,
+    "on-scroll-up": "hyprctl dispatch movefocus l",
+    "on-scroll-down": "hyprctl dispatch movefocus r",
+    "exec-on-event": false,
+    "tooltip": false
   },
   "pulseaudio": {
     "format": "{format_source} {icon}{volume:02}%",

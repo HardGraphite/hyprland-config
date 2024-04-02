@@ -51,6 +51,16 @@ window#waybar.fullscreen {
     border-bottom: 2px solid #33ccff;
 }
 
+#custom-hypaper {
+    font-family: 'Symbols Nerd Font Mono';
+    font-size: 16px;
+    background-color: #a5c8df;
+    color: #111;
+    padding: 2px 5px;
+    margin: 2px 6px;
+    border-radius: 4px;
+}
+
 #tray, #pulseaudio, #network, #battery, #clock {
     font-family: 'Iosevka Slab', 'Symbols Nerd Font Mono';
     font-size: 16px;
