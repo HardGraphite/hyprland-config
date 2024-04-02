@@ -3,6 +3,9 @@ lock	loginctl lock-session
 shutdown	shutdown now
 reboot	shutdown -r now
 
+# Window manager
+go to window	@gotowindow
+
 # Screenshot
 screenshot (screen)	grim "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
 screenshot (region)	slurp | grim -g - "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"

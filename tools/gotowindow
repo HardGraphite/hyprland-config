@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+
+"""
+Choose and focus a window in Hyprland.
+"""
+
+import dataclasses
+import json
+import subprocess
+
+
+@dataclasses.dataclass
+class WindowInfo:
+    address: str
+    title: str
+    class_: str
+    workspace: str
+
+
+def list_windows() -> list[WindowInfo]:
+    cp = subprocess.run(['hyprctl', '-j', 'clients'], stdout=subprocess.PIPE)
+    if cp.returncode != 0:
+        return []
+    windows = []
+    for client in json.loads(cp.stdout):
+        if not client['mapped'] or client['workspace']['id'] < 0:
+            continue
+        windows.append(WindowInfo(
+            address=client['address'],
+            title=client['title'],
+            class_=client['class'],
+            workspace=client['workspace']['name']
+        ))
+    return windows
+
+
+def focus_window(win: WindowInfo) -> bool:
+    cp = subprocess.run(['hyprctl', 'dispatch', 'focuswindow', 'address:' + win.address])
+    return cp.returncode == 0
+
+
+def show_menu(prompt: str, items: list[str]) -> int:
+    cp = subprocess.run(
+        ['fuzzel', '--log-no-syslog', '--log-level=none', '--dmenu', '--prompt', prompt],
+        input='\n'.join(items).encode(), stdout=subprocess.PIPE,
+    )
+    if cp.returncode != 0:
+        return -1
+    return items.index(cp.stdout.rstrip(b'\n').decode())
+
+
+def main():
+    windows = list_windows()
+    if not windows:
+        exit(1)
+    i = show_menu(
+        'Window: ',
+        [f'[{w.workspace}]  {w.title}  ({w.class_})' for w in windows]
+    )
+    if not 0 <= i < len(windows):
+        exit(2)
+    if not focus_window(windows[i]):
+        exit(3)
+
+
+if __name__ == '__main__':
+    main()
