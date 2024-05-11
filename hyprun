@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HYPR_LOG_DIR='/tmp/hypr'
+HYPR_LOG_DIR="$XDG_RUNTIME_DIR/hypr"
 
 echo -e '\e[33mStarting Hyprland...\e[0m'
 if [[ ! -d "$HYPR_LOG_DIR" ]]; then

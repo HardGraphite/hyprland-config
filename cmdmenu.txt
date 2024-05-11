@@ -13,3 +13,4 @@ screenshot (region)	slurp | grim -g - "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).pn
 # Hyprland
 Hyprland effects on	@hypreffects on
 Hyprland effects off	@hypreffects off
+Quit Hyprland	 hyprctl dispatch exit
