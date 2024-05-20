@@ -1,0 +1,6 @@
+#!/bin/bash
+
+APP_ID=Term
+
+/usr/bin/alacritty msg create-window --class $APP_ID "$@" \
+    || exec /usr/bin/alacritty --class $APP_ID "$@"
