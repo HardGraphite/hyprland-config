@@ -10,6 +10,10 @@ go to window	@gotowindow
 screenshot (screen)	grim "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
 screenshot (region)	slurp | grim -g - "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
 
+# Translate
+translate (selection)	@translate @selection
+translate (clipboard)	@translate @clipboard
+
 # Hyprland
 Hyprland effects on	@hypreffects on
 Hyprland effects off	@hypreffects off
