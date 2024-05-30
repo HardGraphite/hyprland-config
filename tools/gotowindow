@@ -15,6 +15,7 @@ class WindowInfo:
     title: str
     class_: str
     workspace: str
+    position: tuple[int, int]
 
 
 def list_windows() -> list[WindowInfo]:
@@ -23,14 +24,27 @@ def list_windows() -> list[WindowInfo]:
         return []
     windows = []
     for client in json.loads(cp.stdout):
-        if not client['mapped'] or client['workspace']['id'] < 0:
+        if not client['mapped'] or (client['workspace']['id'] == -1):
             continue
         windows.append(WindowInfo(
             address=client['address'],
             title=client['title'],
             class_=client['class'],
-            workspace=client['workspace']['name']
+            workspace=client['workspace']['name'],
+            position=client['at'],
         ))
+    def win_sort_key(win: WindowInfo) -> int:
+        win_workspace = win.workspace
+        win_position = win.position
+        if win_workspace.isdigit():
+            key = int(win_workspace)
+        elif win_workspace:
+            key = ord(win_workspace[0])
+        else:
+            key = 0
+        key = key * 10000 + win_position[0]
+        return key
+    windows.sort(key=win_sort_key)
     return windows
 
 

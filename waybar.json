@@ -9,6 +9,9 @@
     "icon-size": 18,
     "spacing": 8
   },
+  "hyprland/workspace": {
+    "show-special": true
+  },
   "custom/hypaper": {
     "exec": "exec stdbuf -o0 sed 's/.*/{\"alt\":\"&\"}/' $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hypaper-indicator",
     "return-type": "json",
