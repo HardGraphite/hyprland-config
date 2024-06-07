@@ -6,6 +6,10 @@ reboot	shutdown -r now
 # Window manager
 go to window	@gotowindow
 
+# UDisks
+mount	@udisksmenu mount
+unmount	@udisksmenu unmount
+
 # Screenshot
 screenshot (screen)	grim "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"
 screenshot (region)	slurp | grim -g - "/tmp/Screenshot-$(date +%y%m%dT%H%M%S).png"

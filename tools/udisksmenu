@@ -1,0 +1,57 @@
+#!/bin/bash
+
+dmenu_cmd='fuzzel --log-no-syslog --log-level=none --dmenu --prompt' # + <PROMPT>
+notify_cmd='notify-send --app-name=UDisksMenu' # + <SUMMARY> <BODY>
+
+function die {
+    echo "$0:" "$@" > /dev/stderr
+    exit 1
+}
+
+function log {
+    echo "$0:" "$@"
+}
+
+function do_mount {
+    local selection=$(
+        lsblk -npro 'NAME,HOTPLUG,MOUNTPOINT,LABEL,FSTYPE' | \
+        awk -F '[ ]' '{ if ($2 == 1 && $3 == "" && $5 != "") printf("%-16s (%s)  [%s]\n", $4, $5, $1); }' | \
+        $dmenu_cmd 'mount ' \
+    )
+    if [[ $? = 0 ]] && [[ -n "$selection" ]]; then
+        local dev_name=$(echo "$selection" | sed -En 's/^.+\[(.+)\]$/\1/p')
+        log 'mount' "$dev_name"
+        local output=$(udisksctl mount -b "$dev_name")
+        $notify_cmd 'Mount' "$output"
+    else
+        die 'abort'
+    fi
+}
+
+function do_unmount_poweroff {
+    local selection=$(
+        lsblk -npro 'NAME,HOTPLUG,MOUNTPOINT,LABEL,FSTYPE' | \
+        awk -F '[ ]' '{ if ($2 == 1 && $3 != "" && $5 != "") printf("%-16s (%s;%s)  [%s]\n", $4, $5, $3, $1); }' | \
+        $dmenu_cmd 'unmount & power-off ' \
+    )
+    if [[ $? = 0 ]] && [[ -n "$selection" ]]; then
+        local dev_name=$(echo "$selection" | sed -En 's/^.+\[(.+)\]$/\1/p')
+        log 'unmount & power-off' "$dev_name"
+        local output=$(udisksctl unmount -b "$dev_name" && udisksctl power-off -b "$dev_name")
+        $notify_cmd 'Unmount & power-off' "$output"
+    else
+        die 'abort'
+    fi
+}
+
+case "$1" in
+    'mount')
+        do_mount
+        ;;
+    'unmount')
+        do_unmount_poweroff
+        ;;
+    *)
+        die "Usage: $0 mount|unmount"
+        ;;
+esac
